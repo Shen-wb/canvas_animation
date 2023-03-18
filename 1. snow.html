@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>snow</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      width: 100%;
+      height: 100%;
+      background-image: url(./image/snow.webp);
+      background-size: cover;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <audio autoplay="autoplay" loop="loop" preload="auto" src="./music/飘雪-韩雪.mp3"> </audio>
+  <canvas onclick="fullscreen()"></canvas>
+  <script>
+    let bPlay = false;
+    const cvs = document.querySelector("canvas");
+    const ctx = cvs.getContext("2d");
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    cvs.width = w;
+    cvs.height = h;
+
+    const snowNum = 700;
+    const snows = [];
+    for(let i = 0; i < snowNum; i++) {
+      snows.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 5 + 1
+      })
+    }
+
+    const move = () => {
+      for(let i = 0; i < snowNum; i++) {
+        const snow = snows[i];
+        snow.x += Math.random() * 2 + 1;
+        snow.y += Math.random() * 2 + 1;
+        if(snow.x > w) {
+          snow.x = 0;
+        }
+        if(snow.y > h) {
+          snow.y = 0;
+        }
+      }
+    }
+    
+    const draw = () => {
+      ctx.clearRect(0,0,w,h);
+      ctx.beginPath();
+      ctx.fillStyle = "#fff";
+      ctx.shadowColor = "#fff";
+      ctx.shadowBlur = 10;
+      for(let i = 0; i < snowNum; i++) {
+        const snow = snows[i];
+        ctx.moveTo(snow.x, snow.y);
+        ctx.arc(snow.x, snow.y, snow.r, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      ctx.closePath();
+      move();
+    }
+    draw();
+
+    const fullscreen = () => {
+      if(bPlay) return;
+      bPlay = true;
+      document.querySelector("audio").play();
+      setInterval(draw, 30);
+      const de = document.documentElement;
+      if(de.requestFullscree) {
+        de.requestFullscree();
+      } else if(de.mozRequestFullscreen) {
+        de.mozRequestFullscreen();
+      } else if(de.webkitRequestFullScreen) {
+        de.webkitRequestFullScreen();
+      }
+    }
+  </script>
+</body>
+</html>
